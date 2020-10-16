@@ -10,6 +10,7 @@ class Controller:
         self.guard = self.map.guard
 
     def run(self):
+        self.map.display()
         while self.running:
             input_direction = input("""Choisissez une direction
 8 (haut), 2 (bas), 4 (gauche), 6 (left) : """)
