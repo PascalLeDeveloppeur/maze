@@ -1,8 +1,6 @@
 from os import system
 from random import sample
 
-# import ipdb; ipdb.set_trace()
-
 from CONSTANT import UP
 from CONSTANT import DOWN
 from CONSTANT import LEFT
@@ -43,7 +41,6 @@ class Map:
     def place_items(self):
         items_position = sample(self.path_list, len(self.items_name_list))
         for i, path in enumerate(items_position):
-            import ipdb; ipdb.set_trace()
             self.items_list.append(
                 Item(path.x_pos, path.y_pos, self.items_name_list[i])
                 )
