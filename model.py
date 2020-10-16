@@ -88,7 +88,11 @@ class Map:
                     print(" ", end='')
             print(u"\u23B8")
         print(" ", u"\u203E" * 15)
-        print("Objets ramassés: ", end='')
+        if len(self.hero.items_carried_list) > 1:
+            print("Objets ramassés: ", end='')
+        else:
+            print("Objet ramassé: ", end='')
+
         for item in self.hero.items_carried_list:
             print(item.name, end=', ')
         print()
@@ -113,11 +117,20 @@ class Map:
             scan_x_pos = hero.x_pos + 1
             scan_y_pos = hero.y_pos
             direction = proposed_direction
-        elif proposed_direction == "5"\
+        elif proposed_direction.upper() == "A"\
                 or proposed_direction.upper() == "S"\
                 or proposed_direction.upper() == "Q":
             return {"status": "lost", "direction": ""}
 
+        # Checking interaction with the guard
+        if scan_x_pos == self.guard.x_pos\
+                and scan_y_pos == self.guard.y_pos:
+            if len(self.hero.items_carried_list)\
+                    == len(self.items_name_list):
+                return {"status": "won", "direction": ""}
+            return {"status": "lost", "direction": ""}
+
+        # Checking interaction with the wall
         for wall in self.walls_list:
             if wall.x_pos == scan_x_pos and wall.y_pos == scan_y_pos:
                 return {"status": "bloked", "direction": ""}
@@ -128,10 +141,12 @@ class Map:
         # Checking interaction with items
         for i in range(0, len(self.items_list)):
             item = self.items_list[i]
+
             if self.hero.x_pos == item.x_pos\
                     and self.hero.y_pos == item.y_pos:
                 self.hero.pick_up(item)
                 self.items_list[i] = None
+
         if None in self.items_list:
             self.items_list.remove(None)
 

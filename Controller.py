@@ -8,6 +8,7 @@ class Controller:
         self.map = Map("./map/map1.txt")
         self.hero = self.map.hero
         self.guard = self.map.guard
+        self.game_message = ""
 
     def run(self):
         self.map.display()
@@ -22,9 +23,11 @@ class Controller:
                 self.hero.move(new_position_dict["direction"])
                 self.map.check_for_interaction()
             elif new_position_dict["status"] == "won":
-                print("YOU WON!")
+                self.game_message = "YOU WON!"
                 self.running = False
             elif new_position_dict["status"] == "lost":
-                print("YOU LOST!")
+                self.game_message = "YOU LOST!"
                 self.running = False
             self.map.display()
+
+        print(self.game_message)
