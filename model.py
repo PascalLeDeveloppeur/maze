@@ -88,6 +88,10 @@ class Map:
                     print(" ", end='')
             print(u"\u23B8")
         print(" ", u"\u203E" * 15)
+        print("Objets ramassés: ", end='')
+        for item in self.hero.items_carried_list:
+            print(item.name, end=', ')
+        print()
 
     def scan_position(self, proposed_direction, hero):
         scan_x_pos = hero.x_pos
@@ -120,7 +124,16 @@ class Map:
         return {"status": "safe", "direction": direction}
 
     def check_for_interaction(self):
-        pass
+
+        # Checking interaction with items
+        for i in range(0, len(self.items_list)):
+            item = self.items_list[i]
+            if self.hero.x_pos == item.x_pos\
+                    and self.hero.y_pos == item.y_pos:
+                self.hero.pick_up(item)
+                self.items_list[i] = None
+        if None in self.items_list:
+            self.items_list.remove(None)
 
 
 class Position:
@@ -147,6 +160,10 @@ class Guard(Position):
 class Hero(Position):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.items_carried_list = []
+
+    def pick_up(self, item):
+        self.items_carried_list.append(item)
 
     def move(self, direction):
         if direction == UP:
@@ -157,7 +174,6 @@ class Hero(Position):
             self.x_pos -= 1
         elif direction == RIGHT:
             self.x_pos += 1
-        print(self.x_pos, self.y_pos)
 
 
 class Item(Position):
