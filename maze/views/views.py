@@ -1,7 +1,7 @@
 class MapView:
 
     def __init__(self, map):
-        self.background_color = "#FFF"
+        self.background_color = "#000"
         self.map = map
 
     def display(self):
