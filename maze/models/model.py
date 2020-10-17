@@ -1,10 +1,7 @@
 from os import system
 from random import sample
 
-from CONSTANT import UP
-from CONSTANT import DOWN
-from CONSTANT import LEFT
-from CONSTANT import RIGHT
+from constants import UP, DOWN, LEFT, RIGHT
 
 
 class Map:
@@ -95,44 +92,40 @@ class Map:
             print(item.name, end=', ')
         print()
 
-    def scan_position(self, proposed_direction, hero):
-        scan_x_pos = hero.x_pos
-        scan_y_pos = hero.y_pos
+    def scan_position(self, proposed_direction):
+        scan_x_pos = self.hero.x_pos
+        scan_y_pos = self.hero.y_pos
         direction = ""
         if proposed_direction == UP and scan_y_pos > 0:
-            scan_x_pos = hero.x_pos
-            scan_y_pos = hero.y_pos - 1
+            scan_y_pos = self.hero.y_pos - 1
             direction = proposed_direction
         elif proposed_direction == DOWN and scan_y_pos < self.height - 1:
-            scan_x_pos = hero.x_pos
-            scan_y_pos = hero.y_pos + 1
+            scan_y_pos = self.hero.y_pos + 1
             direction = proposed_direction
         elif proposed_direction == LEFT and scan_x_pos > 0:
-            scan_x_pos = hero.x_pos - 1
-            scan_y_pos = hero.y_pos
+            scan_x_pos = self.hero.x_pos - 1
             direction = proposed_direction
         elif proposed_direction == RIGHT and scan_x_pos < self.width - 1:
-            scan_x_pos = hero.x_pos + 1
-            scan_y_pos = hero.y_pos
+            scan_x_pos = self.hero.x_pos + 1
             direction = proposed_direction
         elif proposed_direction.upper() == "A"\
                 or proposed_direction.upper() == "S"\
                 or proposed_direction.upper() == "Q":
-            return {"status": "lost", "direction": ""}
+            return "lost", ""
 
         # Checking interaction with the guard
         if scan_x_pos == self.guard.x_pos\
                 and scan_y_pos == self.guard.y_pos:
             if len(self.hero.items_carried_list)\
                     == len(self.items_name_list):
-                return {"status": "won", "direction": ""}
-            return {"status": "lost", "direction": ""}
+                return "won", ""
+            return "lost", ""
 
         # Checking interaction with the wall
         for wall in self.walls_list:
             if wall.x_pos == scan_x_pos and wall.y_pos == scan_y_pos:
-                return {"status": "bloked", "direction": ""}
-        return {"status": "safe", "direction": direction}
+                return "bloked", ""
+        return "safe", direction
 
     def check_for_interaction(self):
 
@@ -140,8 +133,7 @@ class Map:
         for i in range(0, len(self.items_list)):
             item = self.items_list[i]
 
-            if self.hero.x_pos == item.x_pos\
-                    and self.hero.y_pos == item.y_pos:
+            if self.hero.same_position(item):
                 self.hero.pick_up(item)
                 self.items_list[i] = None
 
@@ -149,28 +141,31 @@ class Map:
             self.items_list.remove(None)
 
 
-class Position:
+class PositionMixin:
     def __init__(self, x, y):
         self.x_pos = x
         self.y_pos = y
 
+    def same_position(self, obj):
+        return self.x_pos == obj.x_pos and self.y_pos == obj.y_pos
 
-class Path(Position):
+
+class Path(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
 
 
-class Wall(Position):
+class Wall(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
 
 
-class Guard(Position):
+class Guard(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
 
 
-class Hero(Position):
+class Hero(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.items_carried_list = []
@@ -189,7 +184,7 @@ class Hero(Position):
             self.x_pos += 1
 
 
-class Item(Position):
+class Item(PositionMixin):
     def __init__(self, x, y, name):
         super().__init__(x, y)
         self.name = name
