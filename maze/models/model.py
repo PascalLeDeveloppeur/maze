@@ -1,20 +1,17 @@
 from os import system
 from random import sample
 
-from constants import UP, DOWN, LEFT, RIGHT
-
 
 class Map:
     def __init__(self, file_path):
         self.hero = None
         self.guard = None
         self.items_list = []
-        self.path_list = []
+        self.paths_list = []
         self.walls_list = []
         self.width = 0
         self.height = 0
-        self.items_name_list = ["aiguille", "éther", "seringue", "tube"]
-        self.items_list = []
+        self.items_name_list = ["aiguille", "ether", "seringue", "tube"]
         self.load_map(file_path)
         self.place_items()
 
@@ -27,16 +24,16 @@ class Map:
                 for x, cell in enumerate(row):
                     if cell.upper() == "S":
                         self.hero = Hero(x, y)
-                        self.path_list.append(Path(x, y))
+                        self.paths_list.append(Path(x, y))
                     if cell == ".":
-                        self.path_list.append(Path(x, y))
+                        self.paths_list.append(Path(x, y))
                     if cell.upper() == "X":
-                        self.walls_list.append(Path(x, y))
+                        self.walls_list.append(Wall(x, y))
                     if cell.upper() == "E":
                         self.guard = Guard(x, y)
 
     def place_items(self):
-        items_position = sample(self.path_list, len(self.items_name_list))
+        items_position = sample(self.paths_list, len(self.items_name_list))
         for i, path in enumerate(items_position):
             self.items_list.append(
                 Item(path.x_pos, path.y_pos, self.items_name_list[i])
@@ -92,25 +89,25 @@ class Map:
             print(item.name, end=', ')
         print()
 
-    def scan_position(self, proposed_direction):
+    def scan_position(self, key):
         scan_x_pos = self.hero.x_pos
         scan_y_pos = self.hero.y_pos
         direction = ""
-        if proposed_direction == UP and scan_y_pos > 0:
+        if key == "UP" and scan_y_pos > 0:
             scan_y_pos = self.hero.y_pos - 1
-            direction = proposed_direction
-        elif proposed_direction == DOWN and scan_y_pos < self.height - 1:
+            direction = key
+        elif key == "DOWN" and scan_y_pos < self.height - 1:
             scan_y_pos = self.hero.y_pos + 1
-            direction = proposed_direction
-        elif proposed_direction == LEFT and scan_x_pos > 0:
+            direction = key
+        elif key == "LEFT" and scan_x_pos > 0:
             scan_x_pos = self.hero.x_pos - 1
-            direction = proposed_direction
-        elif proposed_direction == RIGHT and scan_x_pos < self.width - 1:
+            direction = key
+        elif key == "RIGHT" and scan_x_pos < self.width - 1:
             scan_x_pos = self.hero.x_pos + 1
-            direction = proposed_direction
-        elif proposed_direction.upper() == "A"\
-                or proposed_direction.upper() == "S"\
-                or proposed_direction.upper() == "Q":
+            direction = key
+        elif key.upper() == "A"\
+                or key.upper() == "S"\
+                or key.upper() == "Q":
             return "lost", ""
 
         # Checking interaction with the guard
@@ -137,6 +134,7 @@ class Map:
                 self.hero.pick_up(item)
                 self.items_list[i] = None
 
+
         if None in self.items_list:
             self.items_list.remove(None)
 
@@ -153,34 +151,38 @@ class PositionMixin:
 class Path(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.name = "greyfloor2"
 
 
 class Wall(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.name = "wall"
 
 
 class Guard(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.name = "guard"
 
 
 class Hero(PositionMixin):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.items_carried_list = []
+        self.name = "MacGyver"
 
     def pick_up(self, item):
         self.items_carried_list.append(item)
 
     def move(self, direction):
-        if direction == UP:
+        if direction == "UP":
             self.y_pos -= 1
-        elif direction == DOWN:
+        elif direction == "DOWN":
             self.y_pos += 1
-        elif direction == LEFT:
+        elif direction == "LEFT":
             self.x_pos -= 1
-        elif direction == RIGHT:
+        elif direction == "RIGHT":
             self.x_pos += 1
 
 
