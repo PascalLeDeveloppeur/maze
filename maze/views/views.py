@@ -58,10 +58,6 @@ class MapView:
             self.paths_views_list.append(
                 ObjectView(one_path, self.view_properties))
 
-        for one_item in self.map.items_list:
-            self.items_views_list.append(
-                ObjectView(one_item, self.view_properties))
-
         self.hero_view = ObjectView(self.map.hero, self.view_properties)
         self.guard_view = ObjectView(self.map.guard, self.view_properties)
 
@@ -84,7 +80,8 @@ class MapView:
             one_wall_view.display()
 
         # items
-        for one_item_view in self.items_views_list:
+        for one_item in self.map.items_list:
+            one_item_view = ObjectView(one_item, self.view_properties)
             one_item_view.display()
 
         # characters
