@@ -1,6 +1,8 @@
 from os import system
 from random import sample
 
+from constants import UP, DOWN, RIGHT, LEFT, BLOCKED, SAFE
+
 
 class Map:
     def __init__(self, file_path):
@@ -42,73 +44,27 @@ class Map:
     def clear_console(self):
         system("clear")
 
-    def display(self):
-        self.clear_console()
-        print(" ", "_" * 15)
-        for y in range(0, self.height):
-            print(u"\u23B9", end=' ')
-            for x in range(0, self.width):
-                is_cell_filled = False
-                if self.hero.x_pos == x and self.hero.y_pos == y:
-                    print("H", end='')
-                    continue
-                if self.guard.x_pos == x and self.guard.y_pos == y:
-                    print("G", end='')
-                    continue
-                for wall in self.walls_list:
-                    if wall.x_pos == x and wall.y_pos == y:
-                        print(u"\u2588", end='')
-
-                        # In order not to display the path
-                        is_cell_filled = True
-                        continue
-                for item in self.items_list:
-                    if item.x_pos == x and item.y_pos == y:
-                        if item.name == "aiguille":
-                            print("N", end='')
-                        if item.name == "seringue":
-                            print("S", end='')
-                        if item.name == "tube":
-                            print("T", end='')
-                        if item.name == "éther":
-                            print("E", end='')
-
-                        # In order not to display the path
-                        is_cell_filled = True
-                        continue
-                if not is_cell_filled:
-                    print(" ", end='')
-            print(u"\u23B8")
-        print(" ", u"\u203E" * 15)
-        if len(self.hero.items_carried_list) > 1:
-            print("Objets ramassés: ", end='')
-        else:
-            print("Objet ramassé: ", end='')
-
-        for item in self.hero.items_carried_list:
-            print(item.name, end=', ')
-        print()
-
     def scan_position(self, key):
         scan_x_pos = self.hero.x_pos
         scan_y_pos = self.hero.y_pos
         direction = ""
-        if key == "UP" and scan_y_pos > 0:
+        if key:
+            pass
+        if key == UP and scan_y_pos > 0:
             scan_y_pos = self.hero.y_pos - 1
             direction = key
-        elif key == "DOWN" and scan_y_pos < self.height - 1:
+        elif key == DOWN and scan_y_pos < self.height - 1:
             scan_y_pos = self.hero.y_pos + 1
             direction = key
-        elif key == "LEFT" and scan_x_pos > 0:
+        elif key == LEFT and scan_x_pos > 0:
             scan_x_pos = self.hero.x_pos - 1
             direction = key
-        elif key == "RIGHT" and scan_x_pos < self.width - 1:
+        elif key == RIGHT and scan_x_pos < self.width - 1:
             scan_x_pos = self.hero.x_pos + 1
             direction = key
-        elif key.upper() == "A"\
-                or key.upper() == "S"\
-                or key.upper() == "Q":
-            return "lost", ""
+
+        if not direction:
+            return BLOCKED, ""
 
         # Checking interaction with the guard
         if scan_x_pos == self.guard.x_pos\
@@ -121,22 +77,19 @@ class Map:
         # Checking interaction with the wall
         for wall in self.walls_list:
             if wall.x_pos == scan_x_pos and wall.y_pos == scan_y_pos:
-                return "bloked", ""
-        return "safe", direction
+                return BLOCKED, ""
+
+        return SAFE, direction
 
     def check_for_interaction(self):
 
         # Checking interaction with items
-        for i in range(0, len(self.items_list)):
-            item = self.items_list[i]
-
+        for item in self.items_list:
             if self.hero.same_position(item):
                 self.hero.pick_up(item)
-                self.items_list[i] = None
-
-
-        if None in self.items_list:
-            self.items_list.remove(None)
+                self.items_list.remove(item)
+                return True
+        return False
 
 
 class PositionMixin:
@@ -176,13 +129,13 @@ class Hero(PositionMixin):
         self.items_carried_list.append(item)
 
     def move(self, direction):
-        if direction == "UP":
+        if direction == UP:
             self.y_pos -= 1
-        elif direction == "DOWN":
+        elif direction == DOWN:
             self.y_pos += 1
-        elif direction == "LEFT":
+        elif direction == LEFT:
             self.x_pos -= 1
-        elif direction == "RIGHT":
+        elif direction == RIGHT:
             self.x_pos += 1
 
 
