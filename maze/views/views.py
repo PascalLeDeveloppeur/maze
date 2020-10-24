@@ -1,27 +1,21 @@
 from constants import BLACK_COLOR, GREEN_COLOR,\
-    MAZE, ASSETS, IMAGES, SCREEN_WIDTH, SCREEN_HEIGHT, BOTTOM_TEXT
+    MAZE, ASSETS, IMAGES, SCREEN_WIDTH, SCREEN_HEIGHT,\
+    BOTTOM_TEXT, SPRITE_WIDTH_IN_PX, SPRITE_HEIGHT_IN_PX
 from os import path
 
 
 class ViewProperties:
-    def __init__(self, pygame, screen,
-                 margin_x, margin_y,
-                 sprite_width_in_pxl, sprite_height_in_pxl):
+    def __init__(self, pygame, screen, margin_x, margin_y):
 
         self.pygame = pygame
         self.margin_x = margin_x
         self.margin_y = margin_y
-        self.sprite_width_in_pxl = sprite_width_in_pxl
-        self.sprite_height_in_pxl = sprite_height_in_pxl
         self.screen = screen
 
 
 class MapView:
 
     def __init__(self, map, pygame):
-        # TODO: mettre la sprite size dans les constantes
-        self.sprite_width_in_pxl = 43
-        self.sprite_height_in_pxl = 43
         self.pygame = pygame
         self.bg_color = pygame.Color(BLACK_COLOR)
         self.map = map
@@ -32,11 +26,11 @@ class MapView:
         # Margin between the screen and the maze
         self.margin_x = (
             SCREEN_WIDTH
-            - (self.map.width * self.sprite_width_in_pxl)
+            - (self.map.width * SPRITE_WIDTH_IN_PX)
             ) // 2
         self.margin_y = (
             SCREEN_HEIGHT
-            - (self.map.height * self.sprite_height_in_pxl)
+            - (self.map.height * SPRITE_HEIGHT_IN_PX)
             ) // 2
 
         self.pygame.display.set_caption("MacGyver escapes from the maze")
@@ -44,9 +38,7 @@ class MapView:
             (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.view_properties = ViewProperties(self.pygame, self.screen,
-                                              self.margin_x, self.margin_y,
-                                              self.sprite_width_in_pxl,
-                                              self.sprite_height_in_pxl)
+                                              self.margin_x, self.margin_y)
 
         # Initialization of the visual of each object
         for one_wall in self.map.walls_list:
@@ -66,8 +58,8 @@ class MapView:
         # Maze background
         self.maze_bg =\
             self.pygame.Rect(self.margin_x, self.margin_y,
-                             self.sprite_width_in_pxl * self.map.width,
-                             self.sprite_width_in_pxl * self.map.height)
+                             SPRITE_WIDTH_IN_PX * self.map.width,
+                             SPRITE_WIDTH_IN_PX * self.map.height)
 
         self.pygame.draw.rect(self.screen, GREEN_COLOR, self.maze_bg)
 
@@ -115,10 +107,10 @@ class ObjectView:
     def display(self):
         self.rect = self.view_properties.pygame.Rect(
             self.view_properties.margin_x
-            + self.instance.x_pos * self.view_properties.sprite_width_in_pxl,
+            + self.instance.x_pos * SPRITE_WIDTH_IN_PX,
             self.view_properties.margin_y
-            + self.instance.y_pos * self.view_properties.sprite_height_in_pxl,
-            self.view_properties.sprite_width_in_pxl,
-            self.view_properties.sprite_height_in_pxl)
+            + self.instance.y_pos * SPRITE_HEIGHT_IN_PX,
+            SPRITE_WIDTH_IN_PX,
+            SPRITE_HEIGHT_IN_PX)
 
         self.view_properties.screen.blit(self.image, self.rect)
