@@ -19,6 +19,7 @@ class ViewProperties:
 class MapView:
 
     def __init__(self, map, pygame):
+        # TODO: mettre la sprite size dans les constantes
         self.sprite_width_in_pxl = 43
         self.sprite_height_in_pxl = 43
         self.pygame = pygame

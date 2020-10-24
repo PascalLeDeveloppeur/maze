@@ -4,7 +4,7 @@ import sys
 import pygame
 
 from constants import MAZE, ASSETS, SOUND, BLOCKED, SAFE,\
-    DOWN, UP, LEFT, RIGHT, YES, NO
+    DOWN, UP, LEFT, RIGHT, YES, NO, MAP
 from models.model import Map
 from views.views import MapView
 
@@ -22,7 +22,7 @@ class Controller:
             path.join(MAZE, ASSETS, SOUND, "beep28.wav"))
 
         self.is_game_running = True
-        self.map_file = path.join(MAZE, "map", "map1.txt")
+        self.map_file = path.join(MAZE, ASSETS, MAP, "map1.txt")
         self.map = Map(self.map_file)
         self.map_view = MapView(self.map, pygame)
         self.is_pygame_running = True
@@ -38,14 +38,14 @@ class Controller:
             self.choice = event.get('choice')
             while self.is_game_running:
                 event = self.detect_input_event()
+                if event.get("quit_game"):
+                    self.key, self.choice = "", ""
+                    self.game_message = "GAME OVER!"
+                    self.is_game_running = False
                 if event.get("key") or event.get("choice"):
                     self.walk_sound.play()
                     self.key = event.get('key')
                     self.choice = event.get('choice')
-                    if event.get("quit_game"):
-                        self.key, self.choice = "", ""
-                        self.game_message = "GAME OVER!"
-                        self.is_game_running = False
                     self.hero_status, self.direction =\
                         self.map.scan_position(self.key)
                     # The received tuple is in the form:
