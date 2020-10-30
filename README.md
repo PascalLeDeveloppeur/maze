@@ -1,6 +1,13 @@
 # maze
 
+## How to install the game:
+```
+pip install -r requirements.txt
+```
+
+
 ## Goal
+
 You are MacGyver and you are locked in a maze.
 You must collect all the items from the maze then reach the guard to escape.
 If you reach the guard without having collected all the objects,
@@ -9,7 +16,7 @@ you lose the game. Otherwise, you win.
 
 ## How to play:
 
-launch the game: python3 maze
+launch the game: `python3 maze`
 
 move the hero: use the keyboard arrows
 
@@ -29,6 +36,7 @@ Put the "map1.txt" file in "assets/map"
 
 Here an example of a "map1.txt" file:
 
+```
 X...XXX...XX...
 X.X..E.X.X...X.
 ..XXXXXX.X.X...
@@ -44,3 +52,4 @@ X..XXXX.....X..
 ...........XX.X
 XX.XXXXXXXXX...
 X....X.........
+```
